@@ -67,6 +67,7 @@ class MultiZHome:
         self._pairs  = []  # [(stepper, mcu_endstop), ...]
         self._trapqs = []  # one independent trapq per stepper
         self._sks    = []  # one cartesian stepper-kinematics per stepper
+        self._position_endstop = None  # set from [stepper_z] position_endstop
 
     # ------------------------------------------------------------------
     # Startup: discover Z stepper ↔ endstop pairs from kinematics
@@ -89,6 +90,13 @@ class MultiZHome:
                 if not name.startswith('stepper_z') or name in seen:
                     continue
                 seen.add(name)
+
+                # Capture position_endstop from the primary Z rail
+                # (defined in [stepper_z] config) — used to set kinematic
+                # position after homing, just like normal G28 does.
+                if self._position_endstop is None:
+                    self._position_endstop = getattr(
+                        rail, 'position_endstop', None)
 
                 # Find the endstop that is exclusively associated with
                 # this stepper (each extra Z stepper has its own endstop
@@ -122,6 +130,9 @@ class MultiZHome:
             logging.warning(
                 "multi_z_home: no Z stepper/endstop pairs found — "
                 "ensure stepper_z1/z2 each have an endstop_pin configured")
+        if self._position_endstop is None:
+            logging.warning(
+                "multi_z_home: could not read position_endstop from Z rail")
 
     # ------------------------------------------------------------------
     # Motion helpers
@@ -231,9 +242,23 @@ class MultiZHome:
                 "HOME_Z_MOTORS — endstop(s) did not trigger:\n" +
                 "\n".join(errors))
 
+        # ----------------------------------------------------------------
+        # 7. Set kinematic Z position — same as what G28 does internally.
+        #    toolhead.set_position(..., homing_axes=(2,)) marks Z as homed
+        #    and sets limits so subsequent moves are allowed.
+        # ----------------------------------------------------------------
+        if self._position_endstop is not None:
+            pos    = toolhead.get_position()
+            pos[2] = self._position_endstop
+            toolhead.set_position(pos, homing_axes=(2,))
+        else:
+            gcmd.respond_info(
+                "HOME_Z_MOTORS: WARNING — position_endstop unknown; "
+                "call SET_KINEMATIC_POSITION Z=<value> manually.")
+
         gcmd.respond_info(
-            "HOME_Z_MOTORS: all %d Z endstops triggered OK" %
-            len(self._pairs))
+            "HOME_Z_MOTORS: all %d Z endstops triggered OK, Z set to %.3f" %
+            (len(self._pairs), self._position_endstop or 0.))
 
 
 def load_config(config):
