@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Xplorer IDEX — Pin Reference</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; font-size: 11px; color: #000; padding: 20px; }
+  h1 { font-size: 16px; margin-bottom: 4px; }
+  .subtitle { font-size: 11px; color: #555; margin-bottom: 16px; }
+  h2 { font-size: 13px; margin: 16px 0 4px; border-bottom: 1.5px solid #000; padding-bottom: 2px; }
+  h3 { font-size: 11px; margin: 10px 0 3px; color: #333; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 6px; }
+  th { background: #222; color: #fff; text-align: left; padding: 3px 6px; font-size: 10px; }
+  td { padding: 3px 6px; border-bottom: 1px solid #ddd; vertical-align: top; }
+  tr:nth-child(even) td { background: #f5f5f5; }
+  .note { font-size: 10px; color: #444; margin: 2px 0 8px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .col {}
+  @media print {
+    body { padding: 10px; }
+    h2 { page-break-after: avoid; }
+    table { page-break-inside: avoid; }
+    .no-break { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Xplorer IDEX — Pin Reference</h1>
+<div class="subtitle">Manta M8P mainboard &nbsp;|&nbsp; Fysetc H36 v2 toolheads (TH0 / TH1)</div>
+
+<!-- ═══════════════════════════════════════════════════════ MAINBOARD -->
+<h2>Manta M8P — Mainboard</h2>
+
+<div class="grid">
+<div class="col no-break">
+  <h3>Stepper Motors</h3>
+  <table>
+    <tr><th>Motor</th><th>Slot</th><th>STEP</th><th>DIR</th><th>EN</th><th>UART / CS</th><th>Driver</th></tr>
+    <tr><td>Y right (stepper_y)</td><td>M1</td><td>PE6</td><td>PE5</td><td>PC14</td><td>CS: PC13</td><td>TMC2240 SPI</td></tr>
+    <tr><td>Y left (stepper_y1)</td><td>M2</td><td>PE2</td><td>PE1</td><td>PE4</td><td>CS: PE3</td><td>TMC2240 SPI</td></tr>
+    <tr><td>Z front-left (stepper_z)</td><td>M3</td><td>PB8</td><td>PB7</td><td>PE0</td><td>UART: PB9</td><td>TMC2209</td></tr>
+    <tr><td>Z back-center (stepper_z1)</td><td>M4</td><td>PB4</td><td>PB3</td><td>PB6</td><td>UART: PB5</td><td>TMC2209</td></tr>
+    <tr><td>Z front-right (stepper_z2)</td><td>M5</td><td>PG13</td><td>PG12</td><td>PG15</td><td>UART: PG14</td><td>TMC2209</td></tr>
+  </table>
+  <p class="note">TMC2240 shared SPI bus: SCLK PA5 &nbsp;·&nbsp; MOSI PA7 &nbsp;·&nbsp; MISO PA6</p>
+
+  <h3>Endstops</h3>
+  <table>
+    <tr><th>Signal</th><th>Pin</th><th>Header</th></tr>
+    <tr><td>Y right endstop</td><td>PF4</td><td>M1-STOP</td></tr>
+    <tr><td>Y left endstop</td><td>PF3</td><td>M2-STOP</td></tr>
+    <tr><td>Z front-left Zmax</td><td>PF2</td><td>—</td></tr>
+    <tr><td>Z back-center Zmax</td><td>PF1</td><td>—</td></tr>
+    <tr><td>Z front-right Zmax</td><td>PF0</td><td>—</td></tr>
+  </table>
+</div>
+
+<div class="col no-break">
+  <h3>Heaters &amp; Sensors</h3>
+  <table>
+    <tr><th>Function</th><th>Pin</th></tr>
+    <tr><td>Bed heater</td><td>PA0</td></tr>
+    <tr><td>Bed thermistor</td><td>PB1</td></tr>
+    <tr><td>Chamber heater (SSR)</td><td>PA1</td></tr>
+    <tr><td>Chamber thermistor — control</td><td>PB0</td></tr>
+    <tr><td>Chamber PTC element NTC — safety</td><td>PC5</td></tr>
+    <tr><td>Chamber PTC fan</td><td>PA4</td></tr>
+    <tr><td>Chamber lights (PWM)</td><td>PF9</td></tr>
+  </table>
+
+  <h3>Outputs</h3>
+  <table>
+    <tr><th>Function</th><th>Pin</th><th>Notes</th></tr>
+    <tr><td>BTT Relay (PSU control)</td><td>PD14</td><td>HIGH = PSU on</td></tr>
+  </table>
+
+  <h3>External MCUs</h3>
+  <table>
+    <tr><th>Device</th><th>Connection</th></tr>
+    <tr><td>Cartographer eddy probe</td><td>USB — own serial by-id (mcu: scanner)</td></tr>
+    <tr><td>TH0 Fysetc H36 v2</td><td>USB — own serial by-id (mcu: TH0)</td></tr>
+    <tr><td>TH1 Fysetc H36 v2</td><td>USB — own serial by-id (mcu: TH1)</td></tr>
+  </table>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ TOOLHEADS -->
+<h2>Fysetc H36 v2 Toolheads</h2>
+<p class="note">TH0 and TH1 share identical pin assignments — only the MCU prefix differs (TH0: / TH1:).</p>
+
+<div class="grid">
+<div class="col no-break">
+  <h3>X Carriage / Stepper (TMC2240 SPI)</h3>
+  <table>
+    <tr><th>Function</th><th>Pin</th><th>Notes</th></tr>
+    <tr><td>X step</td><td>PB7</td><td></td></tr>
+    <tr><td>X dir</td><td>PA1</td><td></td></tr>
+    <tr><td>X enable</td><td>PA14</td><td></td></tr>
+    <tr><td>X endstop</td><td>PA10</td><td>TH0 = Xmin, TH1 = Xmax</td></tr>
+    <tr><td>TMC2240 CS</td><td>PA13</td><td></td></tr>
+    <tr><td>SPI MOSI</td><td>PB11</td><td></td></tr>
+    <tr><td>SPI MISO</td><td>PA15</td><td></td></tr>
+    <tr><td>SPI SCLK</td><td>PB10</td><td></td></tr>
+  </table>
+
+  <h3>Extruder (Orbiter v2 / TMC2209)</h3>
+  <table>
+    <tr><th>Function</th><th>Pin</th></tr>
+    <tr><td>Step</td><td>PB9</td></tr>
+    <tr><td>Dir</td><td>PC15</td></tr>
+    <tr><td>Enable</td><td>PC14</td></tr>
+    <tr><td>Heater</td><td>PB13</td></tr>
+    <tr><td>Thermistor (PT1000 / 2.2 kΩ pullup)</td><td>PA3</td></tr>
+    <tr><td>TMC2209 UART</td><td>PB6</td></tr>
+    <tr><td>TMC2209 DIAG</td><td>PA13</td></tr>
+  </table>
+</div>
+
+<div class="col no-break">
+  <h3>Fans &amp; Sensors</h3>
+  <table>
+    <tr><th>Function</th><th>Pin</th><th>Notes</th></tr>
+    <tr><td>Hotend fan</td><td>PB15</td><td>shutdown_speed: 1.0</td></tr>
+    <tr><td>Part cooling fan 1</td><td>PB12</td><td>grouped via multi_pin</td></tr>
+    <tr><td>Part cooling fan 2</td><td>PB2</td><td>grouped via multi_pin</td></tr>
+    <tr><td>Filament sensor</td><td>PA9</td><td>pull-up enabled (^)</td></tr>
+    <tr><td>Toolhead LEDs (PWM)</td><td>PB0</td><td></td></tr>
+  </table>
+
+  <h3>ADXL345 Accelerometer (onboard SPI)</h3>
+  <table>
+    <tr><th>Function</th><th>Pin</th></tr>
+    <tr><td>CS</td><td>PA4</td></tr>
+    <tr><td>SCLK</td><td>PA5</td></tr>
+    <tr><td>MISO</td><td>PA6</td></tr>
+    <tr><td>MOSI</td><td>PA7</td></tr>
+  </table>
+
+  <h3>Nozzle Camera (TH1 only)</h3>
+  <table>
+    <tr><th>Wire</th><th>Connect to</th></tr>
+    <tr><td>Yellow — LED+</td><td>H36 5V pin</td></tr>
+    <tr><td>Green/White — D+/D−</td><td>H36 USB-A port (onboard hub)</td></tr>
+    <tr><td>Red — 5V</td><td>H36 USB-A port</td></tr>
+    <tr><td>Black — GND</td><td>H36 USB-A port</td></tr>
+  </table>
+  <p class="note">Hub routes camera to Pi through the same cable as the TH1 MCU — no separate cable run needed.</p>
+</div>
+</div>
+
+</body>
+</html>
