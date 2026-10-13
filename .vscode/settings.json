@@ -1,5 +1,6 @@
 {
   "files.associations": {
     "*.cfg": "ini"
-  }
+  },
+  "cmake.sourceDirectory": "D:/Xplorer_config/nevermore"
 }
